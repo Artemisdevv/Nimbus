@@ -1,6 +1,12 @@
-# Nimbus
+<p align="center">
+  <img src="assets/Nimbus.png" alt="Nimbus" width="180">
+</p>
 
-A lightweight desktop video and audio downloader built with Python, yt-dlp, and pywebview.
+<h1 align="center">Nimbus</h1>
+
+<p align="center">
+  A lightweight desktop video and audio downloader built with Python, yt-dlp, and pywebview.
+</p>
 
 ## Features
 
@@ -105,6 +111,13 @@ Nimbus/
 └── ...
 ```
 
+
 ## License
 
-License information will be added in a future release.
+Nimbus is licensed under the [MIT License](LICENSE).
+
+Nimbus uses third-party software and libraries that are distributed under
+their respective licenses. These licenses do not change the license of
+Nimbus itself.
+
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for details.
