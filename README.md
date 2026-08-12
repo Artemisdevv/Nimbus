@@ -8,17 +8,18 @@
   A lightweight desktop video and audio downloader built with Python, yt-dlp, and pywebview.
 </p>
 
+
 ## Features
 
 - YouTube video and audio downloading
-- 720p and higher video quality options
-- Multiple audio quality options
+- Multiple quality options (minimum 720p, depending on the video)
 - MP4 video output
 - M4A audio output
-- FFmpeg video/audio merging
+- FFmpeg-powered video and audio merging into MP4
 - Deno JavaScript runtime support
 - Download progress, speed, and ETA
 - Simple desktop interface
+
 
 ## Requirements
 
