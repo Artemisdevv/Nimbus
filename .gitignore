@@ -8,6 +8,9 @@ env/
 build/
 dist/
 
+Output/
+Nimbus.iss
+
 deno/
 ffmpeg/
 
