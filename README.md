@@ -56,7 +56,7 @@ Download the Windows installer from the [Releases](https://github.com/Artemisdev
 Clone the repository:
 
 ```bash
-git clone https://github.com/Aswin-A-Arun/Nimbus.git
+git clone https://github.com/Artemisdevv/Nimbus.git
 cd Nimbus
 ```
 
