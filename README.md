@@ -12,6 +12,7 @@
 ## Features
 
 - YouTube video and audio downloading
+- Support for other websites through yt-dlp
 - Multiple quality options (minimum 720p, depending on the video)
 - MP4 video output
 - M4A audio output
