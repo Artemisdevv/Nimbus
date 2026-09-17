@@ -15,7 +15,7 @@
 - Support for other websites through yt-dlp
 - Multiple video quality options (minimum 720p, depending on the video)
 - MP4 and WebM video formats
-- M4A audio output
+- Audio downloads in available source formats
 - FFmpeg-powered video and audio merging
 - Deno JavaScript runtime support
 - Download progress, speed, and ETA
