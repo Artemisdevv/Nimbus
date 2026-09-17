@@ -35,29 +35,37 @@ class Api:
 
         formats = []
         audio_formats = []
-        seen_heights = set()
+
+        video_formats = {}
         seen_audio = set()
 
         for f in info["formats"][::-1]:
             if f.get("vcodec") != "none":
                 height = f.get("height")
+                width = f.get("width")
+                ext = f.get("ext", "")
 
                 if not height or height < 720:
                     continue
-                if height in seen_heights:
-                    continue
 
-                seen_heights.add(height)
-                
-                formats.append({
-                    "format_id": f["format_id"],
-                    "type": "video",
-                    "height": height,
-                    "ext": f.get("ext"),
-                    "fps": f.get("fps"),
-                    "label": f"{height}p {f.get('ext', '')} {f.get('fps') or ''}fps"
-                })
-        # Audio
+                key = (width, height, ext)
+
+                vcodec = f.get("vcodec", "")
+
+                if vcodec.startswith("avc1"):
+                    codec_priority = 0
+                elif vcodec.startswith("vp9"):
+                    codec_priority = 1
+                elif vcodec.startswith("av01"):
+                    codec_priority = 2
+                else:
+                    codec_priority = 3
+
+                current = video_formats.get(key)
+
+                if current is None or codec_priority < current[0]:
+                    video_formats[key] = (codec_priority, f)
+
             elif f.get("acodec") != "none":
                 bitrate = f.get("abr")
 
@@ -68,6 +76,7 @@ class Api:
                     continue
 
                 seen_audio.add(bitrate)
+
                 print(
                     "AUDIO:",
                     f.get("format_id"),
@@ -75,6 +84,7 @@ class Api:
                     f.get("acodec"),
                     f.get("ext")
                 )
+
                 audio_formats.append({
                     "format_id": f["format_id"],
                     "type": "audio",
@@ -83,18 +93,47 @@ class Api:
                     "codec": f.get("acodec"),
                     "label": f"{int(bitrate)} kbps Audio"
                 })
+
+        for _, f in video_formats.values():
+            height = f.get("height")
+            width = f.get("width")
+            ext = f.get("ext", "")
+            fps = f.get("fps")
+
+            if width:
+                resolution = f"{width}x{height}"
+            else:
+                resolution = f"{height}p"
+
+            label = f"{resolution} {ext}"
+
+            if fps:
+                label += f" {fps}fps"
+
+            formats.append({
+                "format_id": f["format_id"],
+                "type": "video",
+                "height": height,
+                "ext": ext,
+                "fps": fps,
+                "label": label
+            })
+
         formats.sort(
             key=lambda f: (
                 f["type"] != "video",
                 -f.get("height", 0),
                 -f.get("bitrate", 0)
-            ))
+            )
+        )
+
         audio_formats.sort(
             key=lambda f: f["bitrate"],
             reverse=True
         )
+
         formats.extend(audio_formats[:3])
-        
+                
         return {
             "title": info.get("title"),
             "duration": info.get("duration"),

@@ -309,7 +309,11 @@ button:hover{
 
 #thumb {
     width: clamp(180px, 30vw, 360px);
+    max-width: 100%;
+    max-height: 320px;
+
     height: auto;
+    width: auto;
 
     flex-shrink: 1;
     min-width: 180px;
