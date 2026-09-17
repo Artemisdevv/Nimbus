@@ -13,10 +13,10 @@
 
 - YouTube video and audio downloading
 - Support for other websites through yt-dlp
-- Multiple quality options (minimum 720p, depending on the video)
-- MP4 video output
+- Multiple video quality options (minimum 720p, depending on the video)
+- MP4 and WebM video formats
 - M4A audio output
-- FFmpeg-powered video and audio merging into MP4
+- FFmpeg-powered video and audio merging
 - Deno JavaScript runtime support
 - Download progress, speed, and ETA
 - Simple desktop interface
