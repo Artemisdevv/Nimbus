@@ -13,10 +13,10 @@
 
 - YouTube video and audio downloading
 - Support for other websites through yt-dlp
-- Multiple quality options (minimum 720p, depending on the video)
-- MP4 video output
-- M4A audio output
-- FFmpeg-powered video and audio merging into MP4
+- Multiple video quality options (minimum 720p, depending on the video)
+- MP4 and WebM video formats
+- Audio downloads in available source formats
+- FFmpeg-powered video and audio merging
 - Deno JavaScript runtime support
 - Download progress, speed, and ETA
 - Simple desktop interface
@@ -38,6 +38,10 @@ Deno and FFmpeg are not included in the source repository. See the build instruc
 
 ## Running Nimbus
 
+### Installer
+
+Download the Windows installer from the [Releases](https://github.com/Artemisdevv/Nimbus/releases) page and run the installer to install Nimbus on your system.
+
 ### Portable
 
 Download the portable ZIP from the [Releases](https://github.com/Artemisdevv/Nimbus/releases) page.
@@ -47,10 +51,6 @@ Extract the ZIP and run:
 `Nimbus.exe`
 
 > **Important:** Keep the extracted `Nimbus` folder intact. Do not delete, move, or rename files inside it.
-
-### Installer
-
-Download the Windows installer from the [Releases](https://github.com/Artemisdevv/Nimbus/releases) page and run the installer to install Nimbus on your system.
 
 ## Building from Source
 
