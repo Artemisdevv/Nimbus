@@ -1,0 +1,167 @@
+/* =========================================================
+   THEME VARIABLES
+   ========================================================= */
+
+body,
+#app,
+#input-bar,
+#results,
+#themeBT,
+#openQueueBT,
+#queue-card,
+#download-card,
+#footer,
+#theme-menu {
+    transition:
+        background-color .6s ease,
+        border-color .6s ease,
+        color .6s ease,
+        box-shadow .6s ease;
+}
+
+:root {
+    /* Accent */
+    --accent: #a855f7;
+    --accent-glow: rgba(168, 85, 247, .4);
+    --accent-soft: rgba(168, 85, 247, .25);
+
+    /* Background */
+    --bg: #070511;
+    --bg-glow: rgba(190, 110, 255, .16);
+    --bg-glow-soft: rgba(190, 110, 255, .08);
+
+    /* Surfaces */
+    --surface: rgba(255, 255, 255, .04);
+    --surface-light: rgba(255, 255, 255, .05);
+    --surface-hover: rgba(255, 255, 255, .07);
+    --surface-strong: rgba(30, 30, 34, .92);
+
+    /* Borders */
+    --border: rgba(255, 255, 255, .08);
+    --border-strong: rgba(255, 255, 255, .14);
+
+    /* Text */
+    --text: rgba(255, 255, 255, .9);
+    --text-soft: rgba(255, 255, 255, .77);
+    --text-muted: rgba(255, 255, 255, .6);
+    --text-faint: rgba(255, 255, 255, .5);
+
+    /* Overlays */
+    --overlay: rgba(0, 0, 0, .35);
+
+    /* Common */
+    --blur: 16px;
+    --radius: 12px;
+    --card-radius: 20px;
+}
+
+
+/* =========================================================
+   THEMES
+   ========================================================= */
+
+[data-theme="purple"] {
+    --accent: #a855f7;
+    --accent-glow: rgba(168, 85, 247, .4);
+    --accent-soft: rgba(168, 85, 247, .25);
+
+    --bg: #070511;
+    --bg-glow: rgba(190, 110, 255, .16);
+    --bg-glow-soft: rgba(190, 110, 255, .08);
+}
+
+[data-theme="blue"] {
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, .4);
+    --accent-soft: rgba(59, 130, 246, .25);
+
+    --bg: #050914;
+    --bg-glow: rgba(70, 130, 255, .16);
+    --bg-glow-soft: rgba(70, 130, 255, .08);
+}
+
+[data-theme="green"] {
+    --accent: #22c55e;
+    --accent-glow: rgba(34, 197, 94, .4);
+    --accent-soft: rgba(34, 197, 94, .25);
+
+    --bg: #050b07;
+    --bg-glow: rgba(70, 220, 120, .16);
+    --bg-glow-soft: rgba(70, 220, 120, .08);
+}
+
+[data-theme="mocha"] {
+    --accent: #c08457;
+    --accent-glow: rgba(192, 132, 87, .4);
+    --accent-soft: rgba(192, 132, 87, .25);
+
+    --bg: #0b0806;
+    --bg-glow: rgba(192, 132, 87, .16);
+    --bg-glow-soft: rgba(192, 132, 87, .08);
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+.is-hidden {
+    display: none;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+}
+
+.fade {
+    transition: opacity .4s ease, transform .4s ease;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            0deg,
+            var(--bg-glow) 0%,
+            var(--bg-glow-soft) 25%,
+            transparent 50%
+        ),
+        var(--bg);
+}
+
+body::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .02;
+
+    background-image:
+        repeating-radial-gradient(
+            circle at 0 0,
+            transparent 0,
+            rgba(255, 255, 255, .03) 1px,
+            transparent 2px
+        );
+}

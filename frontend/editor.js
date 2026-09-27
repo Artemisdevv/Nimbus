@@ -1,3 +1,7 @@
+// import dq.js;
+// import { addToQueue } from "./dq.js";
+
+const app = document.getElementById("app");
 const input = document.querySelector("#input-bar input");
 const button = document.querySelector("#startBT");
 const results = document.querySelector("#results");
@@ -14,7 +18,6 @@ const downloadPercent = document.getElementById("download-percent");
 const progressFill = document.getElementById("progress-fill");
 const downloadInfo = document.getElementById("download-info");
 const downloadOk = document.getElementById("download-ok");
-
 
 
 button.addEventListener("click", async () => {
@@ -54,7 +57,6 @@ button.addEventListener("click", async () => {
     }, 400);
 
 });
-
 
 
 

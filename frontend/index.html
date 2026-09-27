@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 
 <head>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/editor.css">
+    <link rel="stylesheet" href="styles/download.css">
+    <link rel="stylesheet" href="styles/queue.css">
+    <link rel="stylesheet" href="styles/theme.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,7 +14,34 @@
 </head>
 
 <body>
+
+
     <h1 id="logo">Nimbus</h1>
+
+    <div id="top-actions">
+
+        <div id="theme-picker">
+
+            <div id="theme-menu">
+                <button data-theme="purple"></button>
+                <button data-theme="blue"></button>
+                <button data-theme="green"></button>
+                <button data-theme="mocha"></button>
+            </div>
+
+            <button id="themeBT" aria-label="Change theme">
+                <span id="theme-icon">🎨</span>
+            </button>
+
+        </div>
+
+        <button id="openQueueBT">
+            Queue <span id="queue-badge">0</span>
+        </button>
+
+    </div>
+    
+        
     <div id="app">
         <div id="home" class="fade">
             <div id="input-bar">
@@ -34,16 +65,13 @@
             </div>
 
             <div id="footer">
-                <!-- <select id="drop_type" class="fade fade-out is-hidden">
-                    <option value="">Select Type</option>
-                    <option value="">Video (With audio)</option>
-                    <option value="">Audio only</option>
-                </select> -->
                 <select id="dropdown">
                     <option value="">Select Quality</option>
                 </select>
 
-                <button id="downBT">Download</button>
+                <button id="downBT">Quick Download</button>
+                <button id="queueBT">Add to Queue</button>
+
             </div>
 
         </div>
@@ -78,7 +106,33 @@
             <button id="download-ok" disabled>OK</button>
         </div>
     </div>
+    
+    <div id="queue-modal" class="fade fade-out is-hidden">
+        <div id="queue-card">
+                <div id="queue-header">
+                    <div>
+                        <h3>Download Queue</h3>
+                        <p id="queue-count">0 downloads</p>
+                    </div>
 
-    <script src = "editor.js"></script>
+                    <button id="queue-close">x</button>
+                </div>
+
+                <div id="queue-list"></div>
+
+                <div id="queue-footer">
+                    <button id="queue-download" disabled>
+                        Download All
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    <script type="module" src="editor.js"></script>
+    <script type="module" src="qUI.js"></script>
+    <script type="module" src="theme.js"></script>
+
+    
 
 </body>
