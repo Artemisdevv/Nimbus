@@ -1,6 +1,8 @@
 // import dq.js;
 // import { addToQueue } from "./dq.js";
 
+import { updateQueueItem } from "./dq.js";
+
 const app = document.getElementById("app");
 const input = document.querySelector("#input-bar input");
 const button = document.querySelector("#startBT");
@@ -196,8 +198,10 @@ function selectQuality(formats){
 
 async function downloadFile(formatId, formatType) {
     const url = input.value;
+    const uid = crypto.randomUUID();
 
     return await window.pywebview.api.download(
+        uid,
         url,
         formatId,
         formatType
@@ -211,12 +215,20 @@ function startProgressPolling() {
     progressTimer = setInterval(async () => {
         try {
             const progress = await window.pywebview.api.get_progress();
+            for (const [uid,data] of Object.entries(progress)){
+                updateQueueItem(uid,data);
 
-            updateDownloadProgress(
-                progress.percent,
-                progress.speed,
-                progress.eta
-            );
+                if (data.status === "downloading"){
+                    updateDownloadProgress(
+                        data.percent,
+                        data.speed,
+                        data.eta
+                    );
+
+                }
+            }
+
+            
         } catch (error) {
             console.error("Progress error:", error);
         }
@@ -256,4 +268,9 @@ function completeDownload() {
 
 downloadOk.addEventListener("click", () => {
     setVisible(downloadModal, false);
+});
+
+window.addEventListener("downloadQueued", () => {
+    setVisible(downloadModal, false);
+    showHome();
 });

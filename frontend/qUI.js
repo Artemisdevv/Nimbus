@@ -1,7 +1,8 @@
 import {
     addToQueue,
     removeFromQueue,
-    getQueue
+    getQueue,
+    downloadAll
 } from "./dq.js";
 
 
@@ -20,6 +21,15 @@ const dropdown = document.getElementById("dropdown");
 const title = document.getElementById("title");
 const thumb = document.getElementById("thumb");
 
+const queueToast = document.getElementById("queue-toast");
+const added = await addToQueue(download);
+
+if (!added) {
+    showError("This video is already in the queue");
+    return;
+}
+
+window.dispatchEvent(new CustomEvent("downloadQueued"));
 
 /* =========================
    OPEN / CLOSE QUEUE
@@ -35,6 +45,13 @@ openQueueBT.addEventListener("click", () => {
     renderQueue();
 });
 
+queueDownload.addEventListener("click", async () => {
+    try {
+        await downloadAll();
+    } catch (error) {
+        console.error("Download All error:", error);
+    }
+});
 
 queueClose.addEventListener("click", () => {
     queueModal.classList.add("fade-out");
@@ -51,7 +68,7 @@ queueClose.addEventListener("click", () => {
 
 const queueBT = document.getElementById("queueBT");
 
-queueBT.addEventListener("click", () => {
+queueBT.addEventListener("click", async () => {
     const selected = dropdown.options[dropdown.selectedIndex];
 
     if (!selected || !selected.value) {
@@ -60,13 +77,24 @@ queueBT.addEventListener("click", () => {
 
     const download = {
         url: input.value,
-        formatId: selected.value,
-        formatType: selected.dataset.type,
+        format_id: selected.value,
+        format_type: selected.dataset.type,
         title: title.textContent,
         thumbnail: thumb.src
     };
 
-    addToQueue(download);
+    const added = await addToQueue(download);
+
+    if (!added) {
+        showQueueToast("This video is already in the queue");
+        return;
+    }
+
+    showQueueToast("Added to queue");
+
+    window.dispatchEvent(
+        new CustomEvent("downloadQueued")
+    );
 });
 
 
@@ -119,11 +147,11 @@ function renderQueue() {
                 </div>
 
                 <div class="queue-format">
-                    ${escapeHTML(item.formatId)}
+                    ${escapeHTML(item.formatid)}
                 </div>
             </div>
 
-            <button class="queue-remove" data-index="${index}">
+            <button class="queue-remove" data-id="${item.id}">
                 ×
             </button>
         `;
@@ -137,14 +165,14 @@ function renderQueue() {
    REMOVE ITEM
    ========================= */
 
-queueList.addEventListener("click", (event) => {
+queueList.addEventListener("click", async (event) => {
     const button = event.target.closest(".queue-remove");
 
     if (!button) return;
 
-    const index = Number(button.dataset.index);
+    const id = button.dataset.id;
 
-    removeFromQueue(index);
+    await removeFromQueue(id);
 });
 
 
@@ -156,4 +184,13 @@ function escapeHTML(value) {
     const div = document.createElement("div");
     div.textContent = value ?? "";
     return div.innerHTML;
+}
+
+function showQueueToast(message) {
+    queueToast.textContent = message;
+    queueToast.classList.add("show");
+
+    setTimeout(() => {
+        queueToast.classList.remove("show");
+    }, 2500);
 }

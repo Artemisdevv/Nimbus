@@ -1,5 +1,6 @@
 import yt_dlp
 import os
+import threading
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -8,17 +9,20 @@ FFMPEG_PATH = os.path.join(BASE_DIR, "ffmpeg")
 
 class Api:
     def __init__(self):
-        self.progress = {
-            "percent": "0%",
-            "speed": "Unknown",
-            "eta": "Unknown"
-        }
+        self.progress = {}
+        self.downloadQ = []
+        self.q_running = False
+        self.cancelled_jobs = set()
 
     def ping(self):
         return "pong"
 
     def get_progress(self):
         return self.progress
+
+    def cancel_download(self, uid):
+        self.cancelled_jobs.add(uid)
+        return True
 
     def get_video_info(self, url):
 
@@ -142,14 +146,67 @@ class Api:
             "formats": formats
         }
 
-    def download(self, url, format_id, format_type):
-        self.progress = {
+    def start_queue(self):
+        self.q_running = True
+
+        thread = threading.Thread(
+            target=self.process_queue,
+            daemon=True
+        )
+        thread.start()
+
+    def add_to_queue(self, item):
+        self.downloadQ.append(item)
+
+        return True
+    
+    def start_downloads(self):
+        if not self.q_running and self.downloadQ:
+            self.start_queue()
+
+        return True
+
+    def remove_from_queue(self, uid):
+        for item in self.downloadQ:
+            if item["id"] == uid:
+                self.downloadQ.remove(item)
+                return True
+
+        self.cancel_download(uid)
+        return True
+    def start_downloads(self):
+        if not self.q_running and self.downloadQ:
+            self.start_queue()
+
+        return True
+    def process_queue(self):
+        while self.downloadQ:
+            item = self.downloadQ.pop(0)
+
+            self.download(
+                item["id"],
+                item["url"],
+                item["format_id"],
+                item["format_type"]
+            )
+
+        self.q_running = False
+
+
+    def download(self,uid, url, format_id, format_type):
+        self.progress[uid] = {
+            "id":uid,
+            "status":"downloading",
             "percent": "0%",
             "speed": "Unknown",
             "eta": "Unknown"
         }
 
         def progress_hook(d):
+            if uid in self.cancelled_jobs:
+                raise yt_dlp.utils.DownloadError("Download Cancelled")
+
+
             if d["status"] == "downloading":
                 downloaded = d.get("downloaded_bytes", 0)
                 total = d.get("total_bytes") or d.get("total_bytes_estimate")
@@ -174,14 +231,18 @@ class Api:
                 else:
                     eta_text = "Unknown"
 
-                self.progress = {
+                self.progress[uid] = {
+                    "id": uid,
+                    "status":"downloading",
                     "percent": f"{percent:.1f}%",
                     "speed": speed_text,
                     "eta": eta_text
                 }
 
             elif d["status"] == "finished":
-                self.progress = {
+                self.progress[uid] = {
+                    "id": uid,
+                    "status": "completed",
                     "percent": "100%",
                     "speed": "Done",
                     "eta": "00:00"
@@ -222,3 +283,6 @@ class Api:
         except Exception as e:
             print(e)
             return False
+        
+        finally:
+            self.cancelled_jobs.discard(uid)
