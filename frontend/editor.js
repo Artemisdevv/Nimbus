@@ -2,14 +2,13 @@
 // import { addToQueue } from "./dq.js";
 
 import { updateQueueItem } from "./dq.js";
-import { navigateTo } from "./navigation.js";
+import { navigateTo, getCurrentScreen } from "./navigation.js";
 
 const app = document.getElementById("app");
 const input = document.querySelector("#input-bar input");
 const button = document.querySelector("#startBT");
 const results = document.querySelector("#results");
 const reportUrl = document.querySelector("#report-url")
-const rButton = document.querySelector("#returnBT")
 const loader = document.querySelector("#loader");
 const home = document.querySelector("#home");
 const errorBtn = document.querySelector("#error-ok")
@@ -21,7 +20,7 @@ const downloadPercent = document.getElementById("download-percent");
 const progressFill = document.getElementById("progress-fill");
 const downloadInfo = document.getElementById("download-info");
 const downloadOk = document.getElementById("download-ok");
-
+const logo = document.getElementById("logo");
 
 button.addEventListener("click", async () => {
     if (input.value === "") return;
@@ -46,8 +45,8 @@ button.addEventListener("click", async () => {
 
 
 
-rButton.addEventListener("click", () => {
-    navigateTo("home");
+logo.addEventListener("click", () => {
+    if (getCurrentScreen() === "results") navigateTo("home");
 });
 
 

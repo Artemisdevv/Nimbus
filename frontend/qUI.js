@@ -86,10 +86,94 @@ queueBT.addEventListener("click", async () => {
 
     showQueueToast("Added to queue");
 
+    // Animate thumbnail to queue button (fire-and-forget; never blocks queue/navigation)
+    animateThumbnailToQueue(thumb, openQueueBT).catch(() => { /* ignore animation errors */ });
+
     window.dispatchEvent(
         new CustomEvent("downloadQueued")
     );
 });
+
+
+/* =========================
+   THUMBNAIL FLY ANIMATION
+   ========================= */
+
+function animateThumbnailToQueue(thumbEl, targetEl) {
+    return new Promise((resolve) => {
+        if (!thumbEl || !targetEl) {
+            resolve();
+            return;
+        }
+
+        const thumbRect = thumbEl.getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+
+        // If either element is not visible or has no size, skip animation
+        if (thumbRect.width === 0 || thumbRect.height === 0 || targetRect.width === 0 || targetRect.height === 0) {
+            resolve();
+            return;
+        }
+
+        // Create ghost element
+        const ghost = thumbEl.cloneNode(true);
+        ghost.id = "";
+        ghost.style.cssText = `
+            position: fixed;
+            left: ${thumbRect.left}px;
+            top: ${thumbRect.top}px;
+            width: ${thumbRect.width}px;
+            height: ${thumbRect.height}px;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow, var(--accent));
+            z-index: 9999;
+            pointer-events: none;
+            transition: none;
+            opacity: 1;
+        `;
+        // Preserve aspect ratio during animation
+        ghost.style.objectFit = "cover";
+
+        document.body.appendChild(ghost);
+
+        // Force reflow to ensure initial position is applied
+        ghost.getBoundingClientRect();
+
+        // Target position (center of queue button)
+        const targetX = targetRect.left + targetRect.width / 2 - thumbRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2 - thumbRect.height / 2;
+
+        // Animate using Web Animations API for smooth easing
+        // Continuous aggressive shrink: 1.0 -> 0.65 -> 0.35 -> 0.15 -> 0.07 (5-10% of original)
+        const animation = ghost.animate([
+            { transform: "translate(0, 0) scale(1)",   opacity: 1,   offset: 0 },
+            { transform: `translate(${ (targetX - thumbRect.left) * 0.25 }px, ${ (targetY - thumbRect.top) * 0.25 }px) scale(0.65)`, opacity: 0.95, offset: 0.15 },
+            { transform: `translate(${ (targetX - thumbRect.left) * 0.55 }px, ${ (targetY - thumbRect.top) * 0.55 }px) scale(0.35)`, opacity: 0.8,  offset: 0.4 },
+            { transform: `translate(${ (targetX - thumbRect.left) * 0.8 }px, ${ (targetY - thumbRect.top) * 0.8 }px) scale(0.15)`, opacity: 0.4,  offset: 0.7 },
+            { transform: `translate(${targetX - thumbRect.left}px, ${targetY - thumbRect.top}px) scale(0.07)`, opacity: 0,   offset: 1 }
+        ], {
+            duration: 800,
+            easing: "cubic-bezier(0.35, 0, 0.25, 1)", // Smooth continuous deceleration
+            fill: "forwards"
+        });
+
+        animation.onfinish = () => {
+            ghost.remove();
+            resolve();
+        };
+
+        animation.oncancel = () => {
+            ghost.remove();
+            resolve();
+        };
+
+        // Safety timeout in case animation events don't fire
+        setTimeout(() => {
+            if (ghost.isConnected) ghost.remove();
+            resolve();
+        }, 800);
+    });
+}
 
 
 /* =========================

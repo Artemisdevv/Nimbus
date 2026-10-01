@@ -11,7 +11,6 @@ const loader = document.getElementById("loader");
 const results = document.getElementById("results");
 const inputBar = document.querySelector("#input-bar");
 const startBT = document.getElementById("startBT");
-const returnBT = document.getElementById("returnBT");
 const app = document.getElementById("app");
 
 let currentScreen = "home";
@@ -39,12 +38,12 @@ function setVisible(el, visible) {
 }
 
 function hideAllPrimary() {
-    setVisible(home, false);
-    setVisible(loader, false);
-    setVisible(results, false);
-    setVisible(inputBar, false);
-    setVisible(startBT, false);
-    setVisible(returnBT, false);
+    const elems = [home, loader, results, inputBar, startBT];
+    for (const el of elems) {
+        if (!el.classList.contains("is-hidden")) {
+            setVisible(el, false);
+        }
+    }
     app.classList.remove("hidden-card");
     results.classList.remove("show");
     document.body.classList.remove("results-mode");
@@ -58,7 +57,6 @@ export function navigateTo(screen) {
         case "results":
             // Results needs fade-out + timeout before next screen
             results.classList.remove("show");
-            setVisible(returnBT, false);
             // Wait for fade-out to complete before showing next
             setTimeout(() => {
                 hideAllPrimary();
@@ -97,7 +95,6 @@ function showScreen(screen) {
 
         case "results":
             setVisible(results, true);
-            setVisible(returnBT, true);
             document.body.classList.add("results-mode");
             requestAnimationFrame(() => {
                 results.classList.add("show");
