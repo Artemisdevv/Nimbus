@@ -4,6 +4,7 @@ import {
     getQueue,
     downloadAll
 } from "./dq.js";
+import { navigateTo } from "./navigation.js";
 
 
 const queueModal = document.getElementById("queue-modal");
@@ -22,14 +23,7 @@ const title = document.getElementById("title");
 const thumb = document.getElementById("thumb");
 
 const queueToast = document.getElementById("queue-toast");
-const added = await addToQueue(download);
 
-if (!added) {
-    showError("This video is already in the queue");
-    return;
-}
-
-window.dispatchEvent(new CustomEvent("downloadQueued"));
 
 /* =========================
    OPEN / CLOSE QUEUE
@@ -104,6 +98,15 @@ queueBT.addEventListener("click", async () => {
 
 window.addEventListener("queueUpdated", () => {
     renderQueue();
+});
+
+
+/* =========================
+   DOWNLOAD QUEUED
+   ========================= */
+
+window.addEventListener("downloadQueued", () => {
+    navigateTo("home");
 });
 
 

@@ -365,27 +365,75 @@
    QUEUE NOTIFICATION TOAST
    ========================================================= */
    
+/* =========================================================
+   QUEUE NOTIFICATION TOAST
+   ========================================================= */
+
+/* =========================================================
+   QUEUE NOTIFICATION TOAST
+   ========================================================= */
+
 .queue-toast {
     position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translate(-50%, 20px);
+    right: 24px;
+    bottom: 24px;
 
-    padding: 12px 20px;
-    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
 
-    background: #222;
-    color: white;
+    min-width: 220px;
+    max-width: 340px;
+
+    padding: 14px 18px;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    color: var(--text);
+
+    font-family: 'Manrope', sans-serif;
+    font-size: .82rem;
+    font-weight: 600;
+
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, .4),
+        0 0 22px var(--accent-soft);
 
     opacity: 0;
     pointer-events: none;
 
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(14px) scale(.96);
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
 
     z-index: 9999;
 }
 
+.queue-toast::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+
+    box-shadow:
+        0 0 10px var(--accent);
+}
+
 .queue-toast.show {
     opacity: 1;
-    transform: translate(-50%, 0);
+
+    transform:
+        translateY(0)
+        scale(1);
 }

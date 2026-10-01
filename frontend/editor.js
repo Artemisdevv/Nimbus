@@ -2,6 +2,7 @@
 // import { addToQueue } from "./dq.js";
 
 import { updateQueueItem } from "./dq.js";
+import { navigateTo } from "./navigation.js";
 
 const app = document.getElementById("app");
 const input = document.querySelector("#input-bar input");
@@ -25,63 +26,34 @@ const downloadOk = document.getElementById("download-ok");
 button.addEventListener("click", async () => {
     if (input.value === "") return;
 
-    setVisible(button, false);
-    setVisible(input.parentElement, false);
+    navigateTo("loading");
 
     setTimeout(async () => {
-        app.classList.add("hidden-card");
-        setVisible(loader, true);
-
         try {
             await fetch_info();
             await new Promise(r => setTimeout(r, 400));
 
             reportUrl.textContent = input.value;
-            setVisible(loader, false);
-            showResults();
-            setVisible(rButton, true)
-
-            app.classList.remove("hidden-card");
-            requestAnimationFrame(() => {
-                results.classList.add("show");
-            });
+            navigateTo("results");
 
         } catch(err) {
-
-            setVisible(loader, false);
-            app.classList.remove("hidden-card");
-            showHome();
-
+            navigateTo("home");
             console.error(err);
             showError("Failed to fetch metadata");
         }
-
     }, 400);
-
 });
 
 
 
 rButton.addEventListener("click", () => {
-    results.classList.remove("show");
-
-    setTimeout(() => {
-        showHome();
-
-        setVisible(input.parentElement, true);
-        setVisible(button, true);
-        setVisible(rButton, false);
-
-        input.value = "";
-    }, 300);
+    navigateTo("home");
 });
 
 
 errorBtn.addEventListener("click", () => {
-    showHome();
+    navigateTo("home");
     input.value = "";
-    setVisible(button, true)
-    setVisible(input.parentElement, true)
     document.querySelector("#error-modal").hidden = true;
 
 });
@@ -121,37 +93,15 @@ downBtn.addEventListener("click", async () => {
 function setVisible(el, visible) {
     if (visible) {
         el.classList.remove("is-hidden");
-
         requestAnimationFrame(() => {
             el.classList.remove("fade-out");
         });
     } else {
         el.classList.add("fade-out");
-
         el.addEventListener("transitionend", () => {
             el.classList.add("is-hidden");
         }, { once: true });
     }
-}
-
-
-
-function showHome() {
-    setVisible(home, true);
-    setVisible(loader, false);
-    setVisible(results, false);
-
-    document.body.classList.remove("results-mode");
-}
-
-function showResults() {
-    setVisible(home, false);
-    setVisible(loader, false);
-
-    setVisible(results, true);
-    setVisible(rButton, true);
-
-    document.body.classList.add("results-mode");
 }
 
 function showError(message){
@@ -272,5 +222,5 @@ downloadOk.addEventListener("click", () => {
 
 window.addEventListener("downloadQueued", () => {
     setVisible(downloadModal, false);
-    showHome();
+    navigateTo("home");
 });
