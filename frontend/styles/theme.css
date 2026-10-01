@@ -44,41 +44,41 @@
   --card-radius: 20px;
 }
 
-/* Daylight theme */
+/* Daylight theme — warm cream/peach palette (inspired by Catppuccin Frappé Rosewater) */
 [data-theme="daylight"] {
-  /* Accent */
-  --accent: #6366f1;
-  --accent-glow: rgba(99, 102, 241, .3);
-  --accent-soft: rgba(99, 102, 241, .12);
+  /* Accent — lighter warm lavender */
+  --accent: #d8b4fe;
+  --accent-glow: rgba(216, 180, 254, .35);
+  --accent-soft: rgba(216, 180, 254, .15);
 
-  /* Background */
-  --bg: #eef2f7;
-  --bg-glow: radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 255, 255, .6), transparent 70%);
+  /* Background — warmer cream/peach */
+  --bg: #fae6dd;
+  --bg-glow: radial-gradient(ellipse 60% 30% at 50% 0%, rgba(216,180,254,.08), transparent 70%);
   --bg-glow-soft: transparent;
 
-  /* Surfaces — solid */
-  --surface: #ffffff;
-  --surface-light: #f5f7fb;
-  --surface-hover: #edf1f7;
-  --surface-strong: #ffffff;
+  /* Surfaces (unchanged) */
+  --surface: #f5ebe5;
+  --surface-light: #faf3ef;
+  --surface-hover: #ead8d1;
+  --surface-strong: #e8d0c9;
 
   /* Borders */
-  --border: #d0d8e8;
-  --border-strong: #b8c4d8;
+  --border: #d4c4b8;
+  --border-strong: #c9b8ac;
 
-  /* Text */
-  --text: #1a1f2e;
-  --text-soft: #4a5266;
-  --text-muted: #7a8498;
-  --text-faint: #a8b0c0;
+  /* Text hierarchy */
+  --text: #4e433d;
+  --text-soft: #6b5e57;
+  --text-muted: #9a8f88;
+  --text-faint: #b8aea8;
 
   /* Overlays */
-  --overlay: rgba(0, 0, 0, .35);
+  --overlay: rgba(0, 0, 0, .15);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, .08);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .12);
+  /* Shadows — soft, low contrast */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .06);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, .06);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .08);
 
   /* Common */
   --blur: 8px;
@@ -158,34 +158,41 @@ body {
     transition: opacity .6s ease;
 }
 
-/* Midnight atmosphere — sparse stars + faint mist */
-[data-theme="midnight"] #atmosphere {
+
+
+/* Cloud layers — animated drift (midnight only) */
+[data-theme="midnight"] .cloud-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     background:
-        /* Stars — increased visibility and count */
-        radial-gradient(1.5px 1.5px at 5% 10%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 12% 8%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 22% 15%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 30% 5%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 42% 12%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 50% 20%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 60% 8%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 72% 18%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 82% 5%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 90% 25%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 8% 35%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 18% 42%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 35% 38%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 48% 45%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 65% 32%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 78% 40%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 92% 48%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 15% 55%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 40% 60%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 55% 52%, #fff 50%, transparent),
-        radial-gradient(1.5px 1.5px at 70% 58%, #fff 50%, transparent),
-        radial-gradient(1px 1px at 85% 62%, #fff 50%, transparent),
-        /* Faint mist at bottom */
-        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(120, 160, 255, .03), transparent);
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(160,165,180,0.09), transparent),
+        radial-gradient(ellipse 50% 35% at 70% 70%, rgba(150,155,175,0.07), transparent),
+        radial-gradient(ellipse 40% 30% at 40% 60%, rgba(140,150,170,0.06), transparent);
+    filter: blur(60px);
+    opacity: 0.55;
+    will-change: transform;
+    animation: drift var(--drift-duration, 120s) linear infinite;
+}
+
+/* Second layer slower, opposite direction */
+[data-theme="midnight"] .cloud-layer:nth-child(2) {
+    --drift-duration: 180s;
+    animation-direction: reverse;
+    opacity: 0.35;
+    filter: blur(80px);
+}
+
+/* Keyframes for slow parallax drift */
+@keyframes drift {
+    0%   { transform: translate3d(-5%, -3%, 0) scale(1); }
+    50%  { transform: translate3d(5%, 2%, 0) scale(1.02); }
+    100% { transform: translate3d(-5%, -3%, 0) scale(1); }
+}
+
+/* Hide cloud layers in daylight */
+[data-theme="daylight"] .cloud-layer {
+    display: none;
 }
 
 /* Daylight atmosphere — soft clouds */

@@ -176,7 +176,7 @@
 
 #queue-close:hover {
     background: var(--surface-hover);
-    color: white;
+    color: var(--text);
     box-shadow: none;
     transform: none;
 }
@@ -294,7 +294,7 @@
 .queue-remove:hover {
     background: var(--surface-hover);
 
-    color: white;
+    color: var(--text);
 
     box-shadow: none;
 
@@ -321,7 +321,7 @@
 
     background: var(--accent);
 
-    color: white;
+    color: var(--text);
 
     font-family: 'Manrope', sans-serif;
 
@@ -417,7 +417,7 @@
     border: none;
     border-radius: 8px;
     background: var(--accent);
-    color: white;
+    color: var(--text);
     font-family: 'Manrope', sans-serif;
     font-size: .75rem;
     font-weight: 700;

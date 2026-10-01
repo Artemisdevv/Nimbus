@@ -1,7 +1,3 @@
-/* =========================================================
-   DOWNLOAD MODAL
-   ========================================================= */
-
 #download-modal {
     position: fixed;
     inset: 0;
@@ -37,15 +33,13 @@
 
     box-shadow: var(--shadow-lg);
 
-    color: white;
+    color: var(--text);
 
     font-family: 'Manrope', sans-serif;
 
     text-align: center;
 }
 
-
-/* Download title */
 
 #download-status {
     margin: 0 0 20px;
@@ -55,11 +49,9 @@
     font-size: 1.2rem;
     font-weight: 600;
 
-    color: white;
+    color: var(--text);
 }
 
-
-/* Percentage */
 
 #download-percent {
     margin: 0 0 16px;
@@ -69,11 +61,9 @@
     font-size: 2rem;
     font-weight: 700;
 
-    color: white;
+    color: var(--text);
 }
 
-
-/* Progress bar */
 
 #progress-track {
     width: 100%;
@@ -98,8 +88,6 @@
 }
 
 
-/* Speed / ETA */
-
 #download-info {
     margin: 14px 0 22px;
 
@@ -110,8 +98,6 @@
     color: var(--text-muted);
 }
 
-
-/* OK button */
 
 #download-ok {
     padding: 9px 28px;
@@ -127,7 +113,7 @@
     cursor: pointer;
 
     background: var(--accent);
-    color: white;
+    color: var(--text);
 
     transition:
         opacity .2s ease,
