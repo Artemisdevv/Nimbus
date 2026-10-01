@@ -1,23 +1,17 @@
-const themeBT = document.getElementById("themeBT");
-const themeMenu = document.getElementById("theme-menu");
+const themeToggle = document.getElementById("theme-toggle");
 
 const savedTheme = localStorage.getItem("nimbus-theme");
 
 if (savedTheme) {
     document.documentElement.dataset.theme = savedTheme;
+} else {
+    document.documentElement.dataset.theme = "midnight";
 }
 
-themeBT.addEventListener("click", () => {
-    themeMenu.classList.toggle("open");
-});
+themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.dataset.theme;
+    const next = current === "midnight" ? "daylight" : "midnight";
 
-themeMenu.addEventListener("click", (event) => {
-    const theme = event.target.dataset.theme;
-
-    if (!theme) return;
-
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("nimbus-theme", theme);
-
-    themeMenu.classList.remove("open");
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("nimbus-theme", next);
 });

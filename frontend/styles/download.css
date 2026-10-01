@@ -1,4 +1,3 @@
-
 /* =========================================================
    DOWNLOAD MODAL
    ========================================================= */
@@ -36,9 +35,7 @@
 
     border: 1px solid var(--border-strong);
 
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, .35),
-        0 0 0 1px rgba(255, 255, 255, .02);
+    box-shadow: var(--shadow-lg);
 
     color: white;
 
@@ -86,7 +83,7 @@
 
     border-radius: 999px;
 
-    background: rgba(255, 255, 255, .10);
+    background: var(--border);
 }
 
 #progress-fill {

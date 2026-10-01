@@ -1,5 +1,3 @@
-
-
 /* =========================================================
    QUEUE BUTTON
    ========================================================= */
@@ -20,7 +18,6 @@
     font-weight: 600;
     
     cursor: pointer;
-    backdrop-filter: blur(12px);
 
     transition:
         background .2s ease,
@@ -75,7 +72,7 @@
     justify-content: center;
 
     background: var(--overlay);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(8px);
 }
 
 #queue-modal.is-hidden {
@@ -86,36 +83,44 @@
 /* Queue card */
 
 #queue-card {
-    width: min(500px, 90vw);
-    max-height: 75vh;
+    width: min(640px, 92vw);
+    max-height: 78vh;
 
     display: flex;
     flex-direction: column;
 
     box-sizing: border-box;
 
-    border-radius: 18px;
+    border-radius: 20px;
 
-    background:
-    linear-gradient(
-        to bottom,
-        var(--surface) 0%,
-        var(--surface) 60%,
-        var(--accent-soft) 100%
-    );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
+    background: var(--surface-strong);
     border: 1px solid var(--border-strong);
 
-    box-shadow:
-        0 25px 70px rgba(0, 0, 0, .45),
-        0 0 40px var(--accent-soft);
+    box-shadow: var(--shadow-lg);
 
     color: var(--text);
     font-family: 'Manrope', sans-serif;
 
     overflow: hidden;
+}
+
+/* Inner content max-width so inner cards scale less than outer */
+#queue-list {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Header and summary share same wider width */
+#queue-header,
+#queue-summary {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 
@@ -128,7 +133,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 18px 20px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
 }
 
 #queue-header h3 {
@@ -303,8 +308,6 @@
     justify-content: flex-end;
 
     padding: 14px 18px;
-
-    border-top: 1px solid var(--border);
 }
 
 
@@ -361,17 +364,184 @@
     font-size: .8rem;
 }
 
-/* =========================================================
-   QUEUE NOTIFICATION TOAST
-   ========================================================= */
-   
-/* =========================================================
-   QUEUE NOTIFICATION TOAST
-   ========================================================= */
 
 /* =========================================================
-   QUEUE NOTIFICATION TOAST
+   QUEUE SUMMARY BAR - FLOATING CARD AT BOTTOM (with Download All)
    ========================================================= */
+
+#queue-card {
+    display: flex;
+    flex-direction: column;
+    position: relative; /* for absolute positioning of summary */
+}
+
+#queue-summary {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 20px; /* sits above card bottom with gap */
+    flex-shrink: 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-md);
+    z-index: 10; /* floats above scrolling list */
+
+    /* flex layout: progress left, button right */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+#queue-summary .summary-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Download All button inside floating card */
+#queue-summary #queue-download {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    font-family: 'Manrope', sans-serif;
+    font-size: .75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+#queue-summary #queue-download:hover:not(:disabled) {
+    box-shadow: 0 0 10px var(--accent-glow);
+    transform: translateY(-1px);
+}
+
+#queue-summary #queue-download:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Hide the original footer since button moved */
+#queue-footer {
+    display: none;
+}
+
+/* Reserve space at bottom of scrollable list so last item clears floating summary */
+#queue-list {
+    padding-bottom: 130px; /* height of floating summary card + gap */
+}
+
+.progress-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface-hover);
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+    transition: width .3s ease;
+}
+
+.live-stats {
+    display: flex;
+    gap: 16px;
+    font-size: .65rem;
+    font-family: 'Manrope', sans-serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+.live-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* =========================================================
+   QUEUE LIST - make it scrollable within card
+   ========================================================= */
+
+#queue-list {
+    flex: 1;
+    min-height: 0; /* allows flex child to scroll */
+    overflow-y: auto;
+}
+
+/* =========================================================
+   QUEUE ITEM STATE STYLES
+   ========================================================= */
+
+.queue-item {
+    position: relative;
+}
+
+.queue-item[data-status="downloading"] .queue-details,
+.queue-item[data-status="processing"] .queue-details,
+.queue-item[data-status="completed"] .queue-details,
+.queue-item[data-status="queued"] .queue-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.item-progress {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-hover);
+    overflow: hidden;
+}
+
+.item-progress.indeterminate .item-progress-fill {
+    width: 30%;
+    animation: progress-indeterminate 1.5s infinite ease-in-out;
+}
+
+@keyframes progress-indeterminate {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+}
+
+.item-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+    transition: width .2s ease;
+}
+
+.item-percent {
+    font-size: .65rem;
+    font-weight: 600;
+    font-family: 'Manrope', sans-serif;
+}
+
+.item-percent.waiting {
+    color: var(--text-faint);
+}
+
+.item-percent.completed {
+    color: var(--accent);
+}
 
 .queue-toast {
     position: fixed;
@@ -390,9 +560,9 @@
     border: 1px solid var(--border-strong);
     border-radius: 14px;
 
-    background: var(--surface);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: var(--surface-strong);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
     color: var(--text);
 

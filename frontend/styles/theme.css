@@ -1,115 +1,213 @@
-#top-actions {
-    position: fixed;
-    top: 24px;
-    right: 24px;
+/* =========================================================
+   DESIGN TOKENS — Midnight (default) & Daylight
+   ========================================================= */
 
-    display: flex;
-    align-items: center;
-    gap: 8px;
+:root,
+[data-theme="midnight"] {
+  /* Accent */
+  --accent: #a855f7;
+  --accent-glow: rgba(168, 85, 247, .35);
+  --accent-soft: rgba(168, 85, 247, .15);
 
-    z-index: 1001;
+  /* Background */
+  --bg: #050814;
+  --bg-glow: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(120, 100, 255, .12), transparent 70%);
+  --bg-glow-soft: transparent;
+
+  /* Surfaces — solid, not glass */
+  --surface: #0d111c;
+  --surface-light: #101622;
+  --surface-hover: #141a2a;
+  --surface-strong: #0f1420;
+
+  /* Borders */
+  --border: #1e2a3e;
+  --border-strong: #2a3a52;
+
+  /* Text */
+  --text: #e8ecf4;
+  --text-soft: #b8c0d0;
+  --text-muted: #8a94a8;
+  --text-faint: #5a6478;
+
+  /* Overlays */
+  --overlay: rgba(0, 0, 0, .55);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, .25);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .35);
+
+  /* Common */
+  --blur: 8px;
+  --radius: 12px;
+  --card-radius: 20px;
 }
 
-#theme-picker {
-    position: relative;
+/* Daylight theme */
+[data-theme="daylight"] {
+  /* Accent */
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, .3);
+  --accent-soft: rgba(99, 102, 241, .12);
 
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  /* Background */
+  --bg: #eef2f7;
+  --bg-glow: radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255, 255, 255, .6), transparent 70%);
+  --bg-glow-soft: transparent;
+
+  /* Surfaces — solid */
+  --surface: #ffffff;
+  --surface-light: #f5f7fb;
+  --surface-hover: #edf1f7;
+  --surface-strong: #ffffff;
+
+  /* Borders */
+  --border: #d0d8e8;
+  --border-strong: #b8c4d8;
+
+  /* Text */
+  --text: #1a1f2e;
+  --text-soft: #4a5266;
+  --text-muted: #7a8498;
+  --text-faint: #a8b0c0;
+
+  /* Overlays */
+  --overlay: rgba(0, 0, 0, .35);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, .08);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, .12);
+
+  /* Common */
+  --blur: 8px;
+  --radius: 12px;
+  --card-radius: 20px;
 }
 
-#themeBT {
-    width: 38px;
-    height: 38px;
-    padding: 0;
+/* =========================================================
+   GLOBAL TRANSITIONS
+   ========================================================= */
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: var(--surface);
-    color: var(--text);
-
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-
-    backdrop-filter: blur(12px);
-
-    font-size: 1rem;
+body,
+#app,
+#input-bar,
+#results,
+#theme-toggle,
+#openQueueBT,
+#queue-card,
+#download-card,
+#footer,
+#queue-summary,
+#error-card,
+.queue-toast {
+    transition:
+        background-color .6s ease,
+        border-color .6s ease,
+        color .6s ease,
+        box-shadow .6s ease;
 }
 
-/* Expanded color picker */
+/* =========================================================
+   UTILITIES
+   ========================================================= */
 
-#theme-menu {
-    display: flex;
-    align-items: center;
-    gap: 7px;
+[hidden] {
+    display: none !important;
+}
 
-    padding: 7px 9px;
+.is-hidden {
+    display: none;
+}
 
-    background: var(--surface-strong);
-    border: 1px solid var(--border-strong);
-    border-radius: 12px;
-
-    backdrop-filter: blur(16px);
-
+.fade-out {
     opacity: 0;
-    transform: scale(0.85);
-    transform-origin: right center;
+    transform: translateY(-12px);
     pointer-events: none;
-
-    transition:
-        opacity .2s ease,
-        transform .2s ease;
 }
 
-#theme-menu.open {
+.fade {
+    transition: opacity .4s ease, transform .4s ease;
+}
+
+/* =========================================================
+   BODY & ATMOSPHERE
+   ========================================================= */
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+    min-height: 100vh;
+
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* Atmosphere layer — pure CSS, no JS */
+#atmosphere {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
     opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
+    transition: opacity .6s ease;
 }
 
-/* Color circles */
-
-#theme-menu button {
-    width: 22px;
-    height: 22px;
-
-    padding: 0;
-
-    border: 2px solid transparent;
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    transition:
-        transform .15s ease,
-        border-color .15s ease;
+/* Midnight atmosphere — sparse stars + faint mist */
+[data-theme="midnight"] #atmosphere {
+    background:
+        /* Stars — increased visibility and count */
+        radial-gradient(1.5px 1.5px at 5% 10%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 12% 8%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 22% 15%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 30% 5%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 42% 12%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 50% 20%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 60% 8%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 72% 18%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 82% 5%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 90% 25%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 8% 35%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 18% 42%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 35% 38%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 48% 45%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 65% 32%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 78% 40%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 92% 48%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 15% 55%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 40% 60%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 55% 52%, #fff 50%, transparent),
+        radial-gradient(1.5px 1.5px at 70% 58%, #fff 50%, transparent),
+        radial-gradient(1px 1px at 85% 62%, #fff 50%, transparent),
+        /* Faint mist at bottom */
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(120, 160, 255, .03), transparent);
 }
 
-#theme-menu button:hover {
-    transform: scale(1.15);
-
-    border-color: rgba(255, 255, 255, .8);
-
-    box-shadow: none;
+/* Daylight atmosphere — soft clouds */
+[data-theme="daylight"] #atmosphere {
+    background:
+        radial-gradient(ellipse 70% 25% at 25% 15%, rgba(0, 0, 0, .015), transparent),
+        radial-gradient(ellipse 60% 20% at 75% 35%, rgba(0, 0, 0, .01), transparent),
+        radial-gradient(ellipse 50% 15% at 50% 60%, rgba(0, 0, 0, .008), transparent);
 }
 
-
-/* Colors */
-
-#theme-menu button[data-theme="purple"] {
-    background: #a855f7;
-}
-
-#theme-menu button[data-theme="blue"] {
-    background: #3b82f6;
-}
-
-#theme-menu button[data-theme="green"] {
-    background: #22c55e;
-}
-
-#theme-menu button[data-theme="mocha"] {
-    background: #c08457;
+/* Legacy noise pattern (kept as subtle fallback) */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .015;
+    background-image:
+        repeating-radial-gradient(
+            circle at 0 0,
+            transparent 0,
+            rgba(255, 255, 255, .03) 1px,
+            transparent 2px
+        );
 }

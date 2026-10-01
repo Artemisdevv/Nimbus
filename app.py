@@ -1,11 +1,74 @@
 import yt_dlp
 import os
 import threading
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DENO_PATH = os.path.join(BASE_DIR, "deno", "deno.exe")
 FFMPEG_PATH = os.path.join(BASE_DIR, "ffmpeg")
+
+
+def normalize_youtube_url(url: str) -> str:
+    """
+    Strip incidental YouTube Mix/radio parameters from single-video URLs.
+    
+    YouTube adds `list=RD...&start_radio=1` (and sometimes `index=`) to video URLs
+    when opened from Mix/radio. These cause yt-dlp to treat the URL as a playlist.
+    
+    Legitimate playlist URLs (e.g. youtube.com/playlist?list=PL...) or video URLs
+    where the user explicitly includes a non-RD playlist are preserved.
+    """
+    try:
+        parsed = urlparse(url)
+        host = parsed.netloc.lower()
+        
+        # Only process YouTube domains
+        if not any(h in host for h in ("youtube.com", "youtu.be")):
+            return url
+        
+        qs = parse_qs(parsed.query, keep_blank_values=True)
+        
+        # Determine if this is a single-video URL
+        is_video_url = False
+        video_id = None
+        
+        if "youtu.be" in host:
+            # youtu.be/VIDEO_ID[?params]
+            path_parts = parsed.path.strip("/").split("/")
+            if path_parts and path_parts[0]:
+                video_id = path_parts[0]
+                is_video_url = True
+        elif "youtube.com" in host:
+            # youtube.com/watch?v=VIDEO_ID
+            if "v" in qs and qs["v"]:
+                video_id = qs["v"][0]
+                is_video_url = True
+        
+        if not is_video_url:
+            # Not a single-video URL (could be playlist, channel, etc.) - leave alone
+            return url
+        
+        # Check if the 'list' param is a YouTube Mix (RD...) radio playlist
+        list_param = qs.get("list", [None])[0]
+        is_mix_playlist = list_param and list_param.startswith("RD")
+        
+        # Parameters that indicate incidental Mix/radio context
+        incidental_params = {"start_radio", "index"}
+        
+        # Remove incidental parameters if this is a Mix playlist context
+        if is_mix_playlist:
+            for param in incidental_params:
+                qs.pop(param, None)
+            # Also remove the RD... list itself since it's incidental
+            qs.pop("list", None)
+        
+        # Rebuild URL
+        new_query = urlencode(qs, doseq=True)
+        return urlunparse(parsed._replace(query=new_query))
+    except Exception:
+        # On any parsing error, return original URL
+        return url
 
 class Api:
     def __init__(self):
@@ -25,6 +88,8 @@ class Api:
         return True
 
     def get_video_info(self, url):
+        # Normalize URL to strip incidental YouTube Mix/radio params
+        url = normalize_youtube_url(url)
 
         ydl_opts = {
             "js_runtimes": {
@@ -194,6 +259,9 @@ class Api:
 
 
     def download(self,uid, url, format_id, format_type):
+        # Normalize URL to strip incidental YouTube Mix/radio params
+        url = normalize_youtube_url(url)
+
         self.progress[uid] = {
             "id":uid,
             "status":"downloading",
@@ -236,16 +304,37 @@ class Api:
                     "status":"downloading",
                     "percent": f"{percent:.1f}%",
                     "speed": speed_text,
-                    "eta": eta_text
+                    "eta": eta_text,
+                    "downloaded_bytes": downloaded,
+                    "total_bytes": total
                 }
 
             elif d["status"] == "finished":
+                # Download of a stream finished; post-processors may still run.
+                # Mark as processing; postprocessor_hook will keep it there,
+                # and we'll mark completed after ydl.download() returns.
                 self.progress[uid] = {
                     "id": uid,
-                    "status": "completed",
-                    "percent": "100%",
-                    "speed": "Done",
-                    "eta": "00:00"
+                    "status": "processing",
+                    "percent": None,
+                    "speed": "Processing…",
+                    "eta": "—",
+                    "downloaded_bytes": d.get("total_bytes") or d.get("total_bytes_estimate"),
+                    "total_bytes": d.get("total_bytes") or d.get("total_bytes_estimate")
+                }
+
+        def postprocessor_hook(d):
+            # Any post-processor start means we're in processing phase.
+            # Keep status as "processing" through all post-processors.
+            if d["status"] == "started":
+                self.progress[uid] = {
+                    "id": uid,
+                    "status": "processing",
+                    "percent": None,
+                    "speed": "Processing…",
+                    "eta": "—",
+                    "downloaded_bytes": d.get("total_bytes") or d.get("total_bytes_estimate"),
+                    "total_bytes": d.get("total_bytes") or d.get("total_bytes_estimate")
                 }
 
 
@@ -257,6 +346,7 @@ class Api:
             },
             "outtmpl": "~/Downloads/%(title)s.%(ext)s",
             "progress_hooks": [progress_hook],
+            "postprocessor_hooks": [postprocessor_hook],
         }
 
         if format_type == "video":
@@ -278,10 +368,31 @@ class Api:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
 
+            # All post-processors finished successfully
+            self.progress[uid] = {
+                "id": uid,
+                "status": "completed",
+                "percent": "100%",
+                "speed": "Done",
+                "eta": "00:00",
+                "downloaded_bytes": self.progress[uid].get("total_bytes"),
+                "total_bytes": self.progress[uid].get("total_bytes")
+            }
             return True
 
         except Exception as e:
             print(e)
+            # Mark as error if not cancelled
+            if uid not in self.cancelled_jobs:
+                self.progress[uid] = {
+                    "id": uid,
+                    "status": "error",
+                    "percent": None,
+                    "speed": "Error",
+                    "eta": "—",
+                    "downloaded_bytes": self.progress[uid].get("downloaded_bytes"),
+                    "total_bytes": self.progress[uid].get("total_bytes")
+                }
             return False
         
         finally:

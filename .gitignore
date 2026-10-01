@@ -10,6 +10,7 @@ dist/
 
 Output/
 Nimbus.iss
+Nimbus.spec
 
 deno/
 ffmpeg/
