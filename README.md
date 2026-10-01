@@ -20,6 +20,10 @@
 - Deno JavaScript runtime support
 - Download progress, speed, and ETA
 - Simple desktop interface
+- Download queue for multiple concurrent downloads
+- Audio and video format selection
+- Dark/light theme toggle
+- Automatic handling of YouTube Mix/radio URLs
 
 
 ## Requirements
@@ -31,8 +35,14 @@ For building Nimbus from source:
 - Python 3.11+
 - Deno
 - FFmpeg
-- pywebview
-- yt-dlp
+- Python packages (see `requirements.txt`):
+  - pywebview
+  - yt-dlp
+  - yt-dlp-ejs
+  - brotli
+  - mutagen
+  - pycryptodomex
+  - websockets
 
 Deno and FFmpeg are not included in the source repository. See the build instructions below.
 
@@ -114,11 +124,30 @@ Nimbus/
 ├── launcher.py
 ├── requirements.txt
 ├── icon.ico
+├── assets/
+│   └── Nimbus.png
+├── deno/
+│   └── deno.exe
+├── ffmpeg/
+│   ├── ffmpeg.exe
+│   └── ffprobe.exe
 ├── frontend/
 │   ├── index.html
 │   ├── editor.js
-│   └── styles.css
-└── ...
+│   ├── theme.js
+│   ├── stars.js
+│   ├── qUI.js
+│   ├── navigation.js
+│   ├── dq.js
+│   ├── clouds.js
+│   └── styles/
+│       ├── base.css
+│       ├── download.css
+│       ├── editor.css
+│       ├── midnight-haze.css
+│       ├── queue.css
+│       └── theme.css
+└── tests/
 ```
 
 
